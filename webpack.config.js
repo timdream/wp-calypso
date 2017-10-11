@@ -23,6 +23,7 @@ const UseMinifiedFiles = require( './server/bundler/webpack-plugins/use-minified
 const babelConfig = JSON.parse( fs.readFileSync( './.babelrc', { encoding: 'utf8' } ) );
 
 babelConfig.presets[ 0 ][ 1 ].modules = false;
+babelConfig.plugins = _.without( babelConfig.plugins, 'add-module-exports' );
 
 /**
  * Internal variables
