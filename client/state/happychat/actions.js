@@ -3,10 +3,10 @@
 /**
  * Internal dependencies
  */
-import { HAPPYCHAT_SET_CHAT_STATUS, HAPPYCHAT_SET_MESSAGE } from 'state/action-types';
+import { HAPPYCHAT_IO_RECEIVE_STATUS, HAPPYCHAT_SET_MESSAGE } from 'state/action-types';
 
-export const setHappychatChatStatus = status => ( {
-	type: HAPPYCHAT_SET_CHAT_STATUS,
+export const receiveStatus = status => ( {
+	type: HAPPYCHAT_IO_RECEIVE_STATUS,
 	status,
 } );
 
