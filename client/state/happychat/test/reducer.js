@@ -10,8 +10,8 @@ import { expect } from 'chai';
  */
 import { lastActivityTimestamp, message } from '../reducer';
 import {
+	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
-	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
 } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
@@ -36,7 +36,7 @@ describe( 'reducers', () => {
 			result = lastActivityTimestamp( null, { type: HAPPYCHAT_RECEIVE_EVENT } );
 			expect( result ).to.equal( NOW );
 
-			result = lastActivityTimestamp( null, { type: HAPPYCHAT_SEND_MESSAGE } );
+			result = lastActivityTimestamp( null, { type: HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE } );
 			expect( result ).to.equal( NOW );
 		} );
 	} );
@@ -51,8 +51,8 @@ describe( 'reducers', () => {
 			const result = message( 'abc', action );
 			expect( result ).to.eql( 'abcd' );
 		} );
-		test( 'resets to empty string on HAPPYCHAT_SEND_MESSAGE', () => {
-			const action = { type: HAPPYCHAT_SEND_MESSAGE, message: 'abcd' };
+		test( 'resets to empty string on HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE', () => {
+			const action = { type: HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE, message: 'abcd' };
 			const result = message( 'abcd', action );
 			expect( result ).to.eql( '' );
 		} );
