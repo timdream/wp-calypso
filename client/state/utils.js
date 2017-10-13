@@ -5,7 +5,7 @@
  */
 
 import validator from 'is-my-json-valid';
-import { merge, flow, partialRight, reduce, isEqual, omit } from 'lodash';
+import { merge, flow, partialRight, reduce, isEqual, omit, get } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 import LRU from 'lru-cache';
 
@@ -72,7 +72,7 @@ export function isValidStateWithSchema( state, schema ) {
  *     }
  * }
  *
- * @param {string} keyName name of key in action referencing item in state map
+ * @param {string} keyName name of lodash-style path to key in action referencing item in state map
  * @param {function} reducer applied to referenced item in state map
  * @return {function} super-reducer applying reducer over map of keyed items
  */
@@ -98,16 +98,8 @@ export const keyedReducer = ( keyName, reducer ) => {
 
 	return ( state = {}, action ) => {
 		// don't allow coercion of key name: null => 0
-		if ( ! action.hasOwnProperty( keyName ) ) {
-			return state;
-		}
-
-		// the action must refer to some item in the map
-		const itemKey = action[ keyName ];
-
-		// if the action doesn't contain a valid reference
-		// then return without any updates
-		if ( null === itemKey || undefined === itemKey ) {
+		const itemKey = get( action, keyName );
+		if ( ! itemKey ) {
 			return state;
 		}
 
