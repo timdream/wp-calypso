@@ -10,13 +10,13 @@ import React from 'react';
 import Gridicon from 'gridicons';
 
 export default localize(
-	React.createClass( {
-		displayName: 'TermTreeSelectorSearch',
+	class extends React.Component {
+		static displayName = 'TermTreeSelectorSearch';
 
-		propTypes: {
+		static propTypes = {
 			searchTerm: PropTypes.string,
 			onSearch: PropTypes.func.isRequired,
-		},
+		};
 
 		render() {
 			return (
@@ -30,6 +30,6 @@ export default localize(
 					/>
 				</div>
 			);
-		},
-	} )
+		}
+	}
 );

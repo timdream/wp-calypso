@@ -16,14 +16,14 @@ import invitationUtils from './invitation-utils';
 import { ga as googleAnalytics } from 'lib/analytics';
 
 export default localize(
-	React.createClass( {
-		displayName: 'CommunityTranslatorInvitation',
+	class extends React.Component {
+		static displayName = 'CommunityTranslatorInvitation';
 
-		propTypes: {
+		static propTypes = {
 			isVisible: PropTypes.bool,
-		},
+		};
 
-		render: function() {
+		render() {
 			if ( ! this.props.isVisible ) {
 				return null;
 			}
@@ -89,23 +89,23 @@ export default localize(
 					/>
 				</div>
 			);
-		},
+		}
 
-		acceptButton: function() {
+		acceptButton = () => {
 			recordEvent( 'Clicked Accept Button' );
 			invitationUtils.activate();
-		},
+		};
 
-		dismissButton: function() {
+		dismissButton = () => {
 			recordEvent( 'Clicked Dismiss Button' );
 			invitationUtils.dismiss();
-		},
+		};
 
-		docsLink: function() {
+		docsLink = () => {
 			recordEvent( 'More Info' );
 			invitationUtils.recordDocsEvent();
-		},
-	} )
+		};
+	}
 );
 
 function recordEvent( eventAction ) {

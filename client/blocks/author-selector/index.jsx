@@ -8,6 +8,7 @@ import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import debugModule from 'debug';
 import { trim } from 'lodash';
 import Gridicon from 'gridicons';
@@ -31,7 +32,7 @@ const debug = debugModule( 'calypso:author-selector' );
 let instance = 0;
 
 const SwitcherShell = localize(
-	React.createClass( {
+	createReactClass( {
 		displayName: 'AuthorSwitcherShell',
 		propTypes: {
 			users: PropTypes.array,
@@ -247,36 +248,33 @@ const SwitcherShell = localize(
 );
 
 export default localize(
-	React.createClass( {
-		displayName: 'AuthorSelector',
-		propTypes: {
+	class extends React.Component {
+		static displayName = 'AuthorSelector';
+
+		static propTypes = {
 			siteId: PropTypes.number.isRequired,
 			onSelect: PropTypes.func,
 			exclude: PropTypes.arrayOf( PropTypes.number ),
 			allowSingleUser: PropTypes.bool,
 			popoverPosition: PropTypes.string,
-		},
+		};
 
-		getInitialState: function() {
-			return {
-				search: '',
-			};
-		},
+		static defaultProps = {
+			showAuthorMenu: false,
+			onClose: function() {},
+			allowSingleUser: false,
+			popoverPosition: 'bottom left',
+		};
 
-		getDefaultProps: function() {
-			return {
-				showAuthorMenu: false,
-				onClose: function() {},
-				allowSingleUser: false,
-				popoverPosition: 'bottom left',
-			};
-		},
+		state = {
+			search: '',
+		};
 
-		componentDidMount: function() {
+		componentDidMount() {
 			debug( 'AuthorSelector mounted' );
-		},
+		}
 
-		render: function() {
+		render() {
 			let searchString = this.state.search || '';
 			searchString = trim( searchString );
 
@@ -299,13 +297,13 @@ export default localize(
 					<SwitcherShell { ...this.props } updateSearch={ this._updateSearch } />
 				</SiteUsersFetcher>
 			);
-		},
+		}
 
-		_updateSearch: function( searchTerm ) {
+		_updateSearch = searchTerm => {
 			searchTerm = searchTerm ? '*' + searchTerm + '*' : '';
 			this.setState( {
 				search: searchTerm,
 			} );
-		},
-	} )
+		};
+	}
 );
