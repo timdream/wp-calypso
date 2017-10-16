@@ -6,6 +6,7 @@
 
 import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import debugFactory from 'debug';
@@ -19,7 +20,9 @@ import SuggestionsList from './suggestions-list';
 import Token from './token';
 import TokenInput from './token-input';
 
-const TokenField = React.createClass( {
+const TokenField = createReactClass( {
+	displayName: 'TokenField',
+
 	propTypes: {
 		suggestions: PropTypes.array,
 		maxSuggestions: PropTypes.number,

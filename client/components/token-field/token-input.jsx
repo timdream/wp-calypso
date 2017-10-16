@@ -6,9 +6,12 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import PureRenderMixin from 'react-pure-render/mixin';
 
-const TokenInput = React.createClass( {
+const TokenInput = createReactClass( {
+	displayName: 'TokenInput',
+
 	propTypes: {
 		onChange: PropTypes.func,
 		onBlur: PropTypes.func,

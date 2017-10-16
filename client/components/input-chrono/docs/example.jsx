@@ -6,7 +6,6 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -18,14 +17,13 @@ import Card from 'components/card';
  * Date Picker Demo
  */
 const InputChronoExample = localize(
-	React.createClass( {
-		mixins: [ PureRenderMixin ],
-
-		getInitialState() {
-			return {
-				date: this.props.moment(),
-			};
-		},
+	/**
+ * Date Picker Demo
+ */
+	class extends React.PureComponent {
+		state = {
+			date: this.props.moment(),
+		};
 
 		componentWillMount() {
 			var self = this;
@@ -34,16 +32,16 @@ const InputChronoExample = localize(
 				date.hours( date.hours() + 1 );
 				self.setState( { date: date } );
 			}, 1000 );
-		},
+		}
 
 		componentWillUnmount() {
 			clearInterval( this.interval );
-		},
+		}
 
-		onSet( date ) {
+		onSet = date => {
 			console.log( `date: %s`, date.toDate() );
 			this.setState( { date: date } );
-		},
+		};
 
 		render() {
 			return (
@@ -51,8 +49,8 @@ const InputChronoExample = localize(
 					<InputChrono value={ this.state.date.calendar() } onSet={ this.onSet } />
 				</Card>
 			);
-		},
-	} )
+		}
+	}
 );
 
 InputChronoExample.displayName = 'InputChrono';
