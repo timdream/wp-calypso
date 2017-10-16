@@ -6,7 +6,6 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -15,20 +14,16 @@ import Card from 'components/card';
 import DropZone from 'components/drop-zone';
 
 const DropZoneExample = localize(
-	React.createClass( {
-		mixins: [ PureRenderMixin ],
+	class extends React.PureComponent {
+		state = {};
 
-		getInitialState() {
-			return {};
-		},
-
-		onFilesDrop( files ) {
+		onFilesDrop = files => {
 			this.setState( {
 				lastDroppedFiles: files,
 			} );
-		},
+		};
 
-		renderContainerContent() {
+		renderContainerContent = () => {
 			const style = {
 				lineHeight: '100px',
 				textAlign: 'center',
@@ -52,9 +47,9 @@ const DropZoneExample = localize(
 					) }
 				</Card>
 			);
-		},
+		};
 
-		renderContainer() {
+		renderContainer = () => {
 			const style = {
 				position: 'relative',
 				height: '150px',
@@ -66,12 +61,12 @@ const DropZoneExample = localize(
 					<DropZone onFilesDrop={ this.onFilesDrop } />
 				</div>
 			);
-		},
+		};
 
 		render() {
 			return this.renderContainer();
-		},
-	} )
+		}
+	}
 );
 
 DropZoneExample.displayName = 'DropZone';
