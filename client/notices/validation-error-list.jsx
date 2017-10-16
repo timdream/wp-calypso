@@ -10,14 +10,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 export default localize(
-	React.createClass( {
-		displayName: 'ValidationErrorList',
+	class extends React.Component {
+		static displayName = 'ValidationErrorList';
 
-		propTypes: {
+		static propTypes = {
 			messages: PropTypes.array.isRequired,
-		},
+		};
 
-		render: function() {
+		render() {
 			return (
 				<div>
 					<p>
@@ -36,6 +36,6 @@ export default localize(
 					</ul>
 				</div>
 			);
-		},
-	} )
+		}
+	}
 );
