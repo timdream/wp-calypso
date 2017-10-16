@@ -46,12 +46,10 @@ class Connection {
 		}
 		this.dispatch = dispatch;
 
-		return config.then(
-			( { url, user: { signer_user_id, jwt, locale, groups, geo_location } } ) => {
-				const socket = buildConnection( url );
-
-				this.openSocket = new Promise( ( resolve, reject ) => {
-					// TODO: reject this promise
+		this.openSocket = new Promise( ( resolve, reject ) => {
+			config
+				.then( ( { url, user: { signer_user_id, jwt, locale, groups, geo_location } } ) => {
+					const socket = buildConnection( url );
 					socket
 						.once( 'connect', () => dispatch( receiveConnect() ) )
 						.on( 'token', handler => {
@@ -73,9 +71,11 @@ class Connection {
 						.on( 'status', status => dispatch( receiveStatus( status ) ) )
 						.on( 'accept', accept => dispatch( receiveAccept( accept ) ) )
 						.on( 'message', message => dispatch( receiveMessage( message ) ) );
-				} );
-			}
-		);
+				} )
+				.catch( e => reject( e ) );
+		} );
+
+		return this.openSocket;
 	}
 
 	/**
@@ -92,9 +92,13 @@ class Connection {
 		if ( ! this.openSocket ) {
 			return;
 		}
-		this.openSocket.then(
+		return this.openSocket.then(
 			socket => socket.emit( action.event, action.payload ),
-			e => this.dispatch( receiveError( action.error || '' + e ) )
+			e => {
+				this.dispatch( receiveError( action.error + ': ' + e ) );
+				// so we can relay the error message, for testing purposes
+				return Promise.reject( e );
+			}
 		);
 	}
 
@@ -119,25 +123,32 @@ class Connection {
 		if ( ! this.openSocket ) {
 			return;
 		}
-		this.openSocket.then( socket =>
-			Promise.race( [
-				new Promise( ( resolve, reject ) => {
-					socket.emit( action.event, action.payload, ( e, result ) => {
-						if ( e ) {
-							this.dispatch( receiveError( action.error + e ) );
-							return reject( new Error( e ) );
-						}
-						this.dispatch( action.callback( result ) );
-						resolve( result );
-					} );
-				} ),
-				new Promise( ( resolve, reject ) =>
-					setTimeout( () => {
-						reject( Error( 'timeout' ) );
-						this.dispatch( action.callbackTimeout() );
-					}, timeout )
-				),
-			] )
+
+		return this.openSocket.then(
+			socket =>
+				Promise.race( [
+					new Promise( ( resolve, reject ) => {
+						socket.emit( action.event, action.payload, ( e, result ) => {
+							if ( e ) {
+								this.dispatch( receiveError( action.error + e ) );
+								return reject( new Error( e ) );
+							}
+							this.dispatch( action.callback( result ) );
+							resolve( result );
+						} );
+					} ),
+					new Promise( ( resolve, reject ) =>
+						setTimeout( () => {
+							reject( Error( 'timeout' ) );
+							this.dispatch( action.callbackTimeout() );
+						}, timeout )
+					),
+				] ),
+			e => {
+				this.dispatch( receiveError( action.error + ': ' + e ) );
+				// so we can relay the error message, for testing purposes
+				return Promise.reject( e );
+			}
 		);
 	}
 }
