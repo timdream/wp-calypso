@@ -97,4 +97,13 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	unlimitedThemeNudge: {
+		datestamp: '20171016',
+		variations: {
+			hide: 50,
+			show: 50,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
 };
