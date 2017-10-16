@@ -22,6 +22,9 @@ import Emojify from 'components/emojify';
 import titlecase from 'to-title-case';
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
+import { find, get } from 'lodash';
+import url from 'url';
+import { recordTrack } from 'reader/stats';
 
 const StatsListItem = React.createClass( {
 	displayName: 'StatsListItem',
@@ -46,6 +49,22 @@ const StatsListItem = React.createClass( {
 		if ( this.props.data.actionMenu ) {
 			this.removeMenuListener();
 		}
+	},
+
+	isFollowersModule: function() {
+		return !! this.props.followList;
+	},
+
+	getSiteIdForFollow: function() {
+		return (
+			this.isFollowersModule &&
+			get(
+				find( this.props.followList.data, {
+					blog_domain: url.parse( this.props.data.link ).host,
+				} ),
+				'site_id'
+			)
+		);
 	},
 
 	closeMenu: function() {
@@ -94,7 +113,11 @@ const StatsListItem = React.createClass( {
 			} else if ( this.props.data.page && ! this.props.children ) {
 				gaEvent = [ 'Clicked', moduleName, 'Summary Link' ].join( ' ' );
 				page( this.props.data.page );
-			} else if ( this.props.data.link && ! this.props.children ) {
+			} else if (
+				this.props.data.link &&
+				! this.props.children &&
+				! ( this.isFollowersModule() && this.getSiteIdForFollow() )
+			) {
 				gaEvent = [ 'Clicked', moduleName, 'External Link' ].join( ' ' );
 
 				window.open( this.props.data.link );
@@ -216,8 +239,21 @@ const StatsListItem = React.createClass( {
 			}
 
 			if ( data.link ) {
+				let href = data.link;
+				let onClickHandler = this.preventDefaultOnClick;
+				if ( this.isFollowersModule ) {
+					const siteId = this.getSiteIdForFollow();
+					if ( siteId ) {
+						href = '';
+						onClickHandler = event => {
+							event.preventDefault();
+							page( `/read/blogs/${ siteId }` );
+							recordTrack( 'calypso_stats_follower_clicked', { siteId } );
+						};
+					}
+				}
 				itemLabel = (
-					<a onClick={ this.preventDefaultOnClick } href={ data.link }>
+					<a onClick={ onClickHandler } href={ href }>
 						{ labelItem.label }
 					</a>
 				);
