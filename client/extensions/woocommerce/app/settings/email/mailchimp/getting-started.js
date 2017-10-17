@@ -10,13 +10,16 @@ import React from 'react';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { localize } from 'i18n-calypso';
 
-const GettingStarted = localize( ( { translate, onClick, isPlaceholder } ) => {
+const GettingStarted = localize( ( { translate, onClick, isPlaceholder, site, redirectToSettings } ) => {
 	const allow = translate( 'Allow customers to subscribe to your Email list' );
 	const send = translate( 'Send abandon cart emails' );
 	const create = translate( 'Create purchase-based segments for targeted campaigns' );
+	const getStarted = translate( 'Get started with MailChimp' );
 	const list = [ allow, send, create ];
+	const wizardLink = getLink( 'settings/email/:site/wizard', site );
 
 	return (
 		<div>
@@ -46,10 +49,17 @@ const GettingStarted = localize( ( { translate, onClick, isPlaceholder } ) => {
 							</li>
 						) }
 					</ul>
-					<Button className="mailchimp__getting-started-button" onClick={ onClick }>
-						{ translate( 'Get started with MailChimp' ) }
-					</Button>
-				</span> }
+					{ ! redirectToSettings && (
+						<Button className="mailchimp__getting-started-button" onClick={ onClick }>
+							{ getStarted }
+						</Button>
+					) }
+					{ redirectToSettings && (
+						<Button className="mailchimp__getting-started-button" href={ wizardLink }>
+							{ getStarted }
+						</Button>
+					) }
+				</span>
 			</Card> }
 			{ isPlaceholder &&
 				<Card
@@ -59,7 +69,7 @@ const GettingStarted = localize( ( { translate, onClick, isPlaceholder } ) => {
 					<p />
 					<p />
 					<p />
-				</Card>}
+				</Card> }
 		</div>
 	);
 } );
@@ -67,6 +77,7 @@ const GettingStarted = localize( ( { translate, onClick, isPlaceholder } ) => {
 GettingStarted.propTypes = {
 	onClick: PropTypes.func.isRequired,
 	isPlaceholder: PropTypes.bool,
+	redirectToSettings: PropTypes.bool,
 };
 
 export default GettingStarted;
