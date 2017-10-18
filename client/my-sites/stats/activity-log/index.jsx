@@ -300,6 +300,10 @@ class ActivityLog extends Component {
 		);
 
 		const activityDays = [];
+
+		// Save first empty day
+		let thatEmptyDay = '';
+
 		// loop backwards through each day in the month
 		for (
 			const m = moment.min(
@@ -317,6 +321,28 @@ class ActivityLog extends Component {
 			m.subtract( 1, 'day' )
 		) {
 			const dayEnd = m.endOf( 'day' ).valueOf();
+			const dayLogs = get( logsGroupedByDay, dayEnd, [] );
+
+			if ( '' === thatEmptyDay && isEmpty( dayLogs ) ) {
+				thatEmptyDay = dayEnd;
+			} else if ( '' !== thatEmptyDay && ! isEmpty( dayLogs ) ) {
+				const thisEmptyDay = m
+					.endOf( 'day' )
+					.add( 1, 'day' )
+					.valueOf();
+				activityDays.push(
+					<div className="activity-log-day">
+						{ thisEmptyDay !== thatEmptyDay ? (
+							`${ this.applySiteOffset( moment.utc( thisEmptyDay ) ).format( 'LL' ) }
+								 - ${ this.applySiteOffset( moment.utc( thatEmptyDay ) ).format( 'LL' ) }`
+						) : (
+							`${ this.applySiteOffset( moment.utc( thatEmptyDay ) ).format( 'LL' ) }`
+						) }
+					</div>
+				);
+				thatEmptyDay = '';
+			}
+
 			activityDays.push(
 				<ActivityLogDay
 					applySiteOffset={ this.applySiteOffset }
@@ -326,7 +352,7 @@ class ActivityLog extends Component {
 					hideRestore={ ! rewindEnabledByConfig || ! isPressable }
 					isRewindActive={ isRewindActive }
 					key={ dayEnd }
-					logs={ get( logsGroupedByDay, dayEnd, [] ) }
+					logs={ dayLogs }
 					requestRestore={ this.handleRequestRestore }
 					siteId={ siteId }
 					tsEndOfSiteDay={ dayEnd }
