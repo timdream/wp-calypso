@@ -268,7 +268,10 @@ const CheckoutThankYou = React.createClass( {
 
 		const { signupIsStore } = this.props;
 
-		if ( wasDotcomPlanPurchased && signupIsStore ) {
+		if ( ! this.props.selectedSite ) {
+			// selected site not yet loaded
+			return <Main className="checkout-thank-you">Loading...</Main>;
+		} else if ( wasDotcomPlanPurchased && signupIsStore ) {
 			return (
 				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
