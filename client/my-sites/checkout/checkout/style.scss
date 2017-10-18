@@ -544,63 +544,63 @@
 	//
 	// Domain Registration Details Page
 	//
-
-	.domain-details {
-		.first-name {
-			margin-top: 0;
-		}
-
-		@include breakpoint( ">660px" ) {
-			.last-name {
-				margin-top: 0;
-			}
-
-			.hidden-input a,
-			.checkout-field {
-				float: left;
-				width: 100%;
-			}
-
-			.last-name,
-			.phone,
-			.postal-code {
-				float: right;
-			}
-
-			.email,
-			.first-name,
-			.last-name,
-			.phone {
-				width: calc( 50% - 7px );
-			}
-
-			.city,
-			.postal-code,
-			.state {
-				width: calc( 33% - 8px );
-			}
-
-			.state {
-				margin-left: 14px;
-
-				label + select {
-					min-width: inherit;
-				}
-			}
-
-			&.only-google-apps-details {
-				.country {
-					width: 66%;
-				}
-			}
-		}
-
-		.hidden-input a {
-			display: block;
-			font-size: 12px;
-			margin-top: 5px;
-		}
-	}
+//
+//	.domain-details {
+//		.first-name {
+//			margin-top: 0;
+//		}
+//
+//		@include breakpoint( ">660px" ) {
+//			.last-name {
+//				margin-top: 0;
+//			}
+//
+//			.hidden-input a,
+//			.checkout-field {
+//				float: left;
+//				width: 100%;
+//			}
+//
+//			.last-name,
+//			.phone,
+//			.postal-code {
+//				float: right;
+//			}
+//
+//			.email,
+//			.first-name,
+//			.last-name,
+//			.phone {
+//				width: calc( 50% - 7px );
+//			}
+//
+//			.city,
+//			.postal-code,
+//			.state {
+//				width: calc( 33% - 8px );
+//			}
+//
+//			.state {
+//				margin-left: 14px;
+//
+//				label + select {
+//					min-width: inherit;
+//				}
+//			}
+//
+//			&.only-google-apps-details {
+//				.country {
+//					width: 66%;
+//				}
+//			}
+//		}
+//
+//		.hidden-input a {
+//			display: block;
+//			font-size: 12px;
+//			margin-top: 5px;
+//		}
+//	}
 }
 
 .privacy-protection {
