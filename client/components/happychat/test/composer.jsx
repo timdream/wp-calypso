@@ -13,11 +13,40 @@ import { Composer } from '../composer';
 
 describe( '<Composer />', () => {
 	describe( 'onChange event ', () => {
-		test( 'should call onSendTyping property', () => {
+		test( 'should call onSetMessage property and send a typing event if message is not empty', () => {
+			const onSendNotTyping = jest.fn();
 			const onSendTyping = jest.fn();
-			const wrapper = shallow( <Composer onSendTyping={ onSendTyping } /> );
+			const onSetMessage = jest.fn();
+			const wrapper = shallow(
+				<Composer
+					message={ 'hey' }
+					onSetMessage={ onSetMessage }
+					onSendTyping={ onSendTyping }
+					onSendNotTyping={ onSendNotTyping }
+				/>
+			);
 			wrapper.find( 'textarea' ).simulate( 'change', { target: { value: 'hey' } } );
+			expect( onSetMessage ).toHaveBeenCalled();
 			expect( onSendTyping ).toHaveBeenCalled();
+			expect( onSendNotTyping ).not.toHaveBeenCalled();
+		} );
+
+		test( 'should call onSetMessage property and send a noTyping event if message is empty', () => {
+			const onSendNotTyping = jest.fn();
+			const onSendTyping = jest.fn();
+			const onSetMessage = jest.fn();
+			const wrapper = shallow(
+				<Composer
+					message={ '' }
+					onSetMessage={ onSetMessage }
+					onSendTyping={ onSendTyping }
+					onSendNotTyping={ onSendNotTyping }
+				/>
+			);
+			wrapper.find( 'textarea' ).simulate( 'change', { target: { value: '' } } );
+			expect( onSetMessage ).toHaveBeenCalled();
+			expect( onSendTyping ).not.toHaveBeenCalled();
+			expect( onSendNotTyping ).toHaveBeenCalled();
 		} );
 	} );
 

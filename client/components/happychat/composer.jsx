@@ -11,6 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { setMessage } from 'state/happychat/actions';
 import { sendMessage, sendTyping, sendNotTyping } from 'state/happychat/connection/actions';
 import { canUserSendMessages } from 'state/happychat/selectors';
 import { when, forEach, compose, propEquals, call, prop } from './functional';
@@ -22,14 +23,6 @@ const returnPressed = propEquals( 'which', 13 );
 // helper function that calls prevents default on the DOM event
 const preventDefault = call( 'preventDefault' );
 
-const sendThrottledTyping = throttle(
-	( dispatch, message ) => {
-		dispatch( sendTyping( message ) );
-	},
-	1000,
-	{ leading: true, trailing: false }
-);
-
 /*
  * Renders a textarea to be used to comopose a message for the chat.
  */
@@ -37,7 +30,22 @@ export const Composer = React.createClass( {
 	mixins: [ scrollbleed ],
 
 	render() {
-		const { disabled, message, onSendMessage, onSendNotTyping, onSendTyping, onFocus } = this.props;
+		const {
+			disabled,
+			message,
+			onSendMessage,
+			onSendNotTyping,
+			onSendTyping,
+			onSetMessage,
+			onFocus,
+		} = this.props;
+		const sendThrottledTyping = throttle(
+			msg => {
+				onSendTyping( msg );
+			},
+			1000,
+			{ leading: true, trailing: false }
+		);
 		const sendMsg = when(
 			() => ! isEmpty( message ),
 			() => {
@@ -45,7 +53,11 @@ export const Composer = React.createClass( {
 				onSendNotTyping();
 			}
 		);
-		const onChange = compose( prop( 'target.value' ), onSendTyping );
+		const setMsg = msg => {
+			onSetMessage( msg );
+			isEmpty( msg ) ? onSendNotTyping() : sendThrottledTyping( msg );
+		};
+		const onChange = compose( prop( 'target.value' ), setMsg );
 		const onKeyDown = when( returnPressed, forEach( preventDefault, sendMsg ) );
 		const composerClasses = classNames( 'happychat__composer', {
 			'is-disabled': disabled,
@@ -69,7 +81,7 @@ export const Composer = React.createClass( {
 						value={ message }
 					/>
 				</div>
-				<button className="happychat__submit" disabled={ disabled } onClick={ sendMessage }>
+				<button className="happychat__submit" disabled={ disabled } onClick={ sendMsg }>
 					<svg viewBox="0 0 24 24" width="24" height="24">
 						<path d="M2 21l21-9L2 3v7l15 2-15 2z" />
 					</svg>
@@ -86,13 +98,16 @@ const mapState = state => ( {
 
 const mapDispatch = dispatch => ( {
 	onSendTyping( message ) {
-		isEmpty( message ) ? dispatch( sendNotTyping() ) : sendThrottledTyping( dispatch, message );
+		dispatch( sendTyping( message ) );
 	},
 	onSendNotTyping() {
 		dispatch( sendNotTyping() );
 	},
 	onSendMessage( message ) {
 		dispatch( sendMessage( message ) );
+	},
+	onSetMessage( message ) {
+		dispatch( setMessage( message ) );
 	},
 } );
 

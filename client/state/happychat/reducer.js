@@ -18,6 +18,7 @@ import {
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
+	HAPPYCHAT_SET_MESSAGE,
 } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 import { HAPPYCHAT_CHAT_STATUS_DEFAULT } from './selectors';
@@ -157,11 +158,30 @@ export const lastActivityTimestamp = ( state = null, action ) => {
 };
 lastActivityTimestamp.schema = { type: 'number' };
 
+/**
+ * Tracks the current message the user has typed into the happychat client
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ *
+ */
+export const message = ( state = '', action ) => {
+	switch ( action.type ) {
+		case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
+			return '';
+		case HAPPYCHAT_SET_MESSAGE:
+			return action.message;
+	}
+	return state;
+};
+
 export default combineReducers( {
 	chatStatus,
+	connection,
 	lastActivityTimestamp,
+	message,
 	timeline,
 	ui,
 	user,
-	connection,
 } );
