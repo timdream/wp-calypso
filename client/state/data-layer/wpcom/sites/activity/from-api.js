@@ -35,9 +35,7 @@ export function transformer( apiResponse ) {
  * @return {object}       Processed Activity item ready for use in UI
  */
 export function processItem( item ) {
-	return {
-		...processItemBase( item ),
-	};
+	return processItemBase( item );
 }
 
 export function processItemActor( item ) {
@@ -63,6 +61,7 @@ export function processItemBase( item ) {
 		activityStatus: get( item, 'status' ),
 		activityTitle: get( item, 'summary', '' ),
 		activityTs: Date.parse( published ),
+		activityTargetTs: get( item, 'object.target_ts', null ),
 	};
 }
 
