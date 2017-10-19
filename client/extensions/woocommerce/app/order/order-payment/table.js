@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { get, set } from 'lodash';
+import { clone, get, setWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -43,16 +43,17 @@ class OrderRefundTable extends Component {
 
 	constructor( props ) {
 		super( props );
-		const shippingTax = getOrderShippingTax( props.order );
-		const shippingTotal = parseFloat( shippingTax ) + parseFloat( props.order.shipping_total );
+		const { order } = props;
+		const shippingTax = getOrderShippingTax( order );
+		const shippingTotal = parseFloat( shippingTax ) + parseFloat( order.shipping_total );
 
 		this.state = {
 			quantities: {},
-			fees: props.order.fee_lines.map( ( item, i ) => {
-				const value = parseFloat( item.total ) + parseFloat( getOrderFeeTax( props.order, i ) );
-				return getCurrencyFormatDecimal( value );
+			fees: order.fee_lines.map( ( item, i ) => {
+				const value = parseFloat( item.total ) + parseFloat( getOrderFeeTax( order, i ) );
+				return getCurrencyFormatDecimal( value, order.currency );
 			} ),
-			shippingTotal: getCurrencyFormatDecimal( shippingTotal ),
+			shippingTotal: getCurrencyFormatDecimal( shippingTotal, order.currency ),
 		};
 	}
 
@@ -70,12 +71,12 @@ class OrderRefundTable extends Component {
 	};
 
 	formatInput = name => {
+		const { order } = this.props;
 		return () => {
 			this.setState( prevState => {
-				const newState = Object.assign(
-					{},
-					set( prevState, name, getCurrencyFormatDecimal( get( prevState, name ) ) )
-				);
+				const newValue = getCurrencyFormatDecimal( get( prevState, name ), order.currency );
+				// Update the new value in state without mutations https://github.com/lodash/lodash/issues/1696#issuecomment-328335502
+				const newState = setWith( clone( prevState ), name, newValue, clone );
 				return newState;
 			} );
 		};
