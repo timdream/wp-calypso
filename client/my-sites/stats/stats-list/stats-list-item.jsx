@@ -239,7 +239,10 @@ const StatsListItem = React.createClass( {
 						onClickHandler = event => {
 							event.preventDefault();
 							page( `/read/blogs/${ siteId }` );
-							recordTrack( 'calypso_reader_stats_module_site_stream_link_click', { siteId } );
+							recordTrack( 'calypso_reader_stats_module_site_stream_link_click', {
+								siteId,
+								module_name: this.props.moduleName,
+							} );
 						};
 					}
 				}
