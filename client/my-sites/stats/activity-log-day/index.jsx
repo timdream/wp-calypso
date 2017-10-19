@@ -10,7 +10,7 @@ import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flatMap, get, isEmpty } from 'lodash';
+import { flatMap, get, isEmpty, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,12 +34,13 @@ class ActivityLogDay extends Component {
 		disableRestore: PropTypes.bool.isRequired,
 		hideRestore: PropTypes.bool,
 		isRewindActive: PropTypes.bool,
-		logs: PropTypes.array.isRequired,
+		logs: PropTypes.array,
 		requestedRestoreActivityId: PropTypes.string,
-		requestRestore: PropTypes.func.isRequired,
+		requestRestore: PropTypes.func,
 		rewindConfirmDialog: PropTypes.element,
 		siteId: PropTypes.number,
 		tsEndOfSiteDay: PropTypes.number.isRequired,
+		emptyRangeDate: PropTypes.string,
 
 		// Connected props
 		isToday: PropTypes.bool.isRequired,
@@ -51,6 +52,9 @@ class ActivityLogDay extends Component {
 	static defaultProps = {
 		disableRestore: false,
 		isRewindActive: true,
+		emptyRangeDate: '',
+		requestRestore: noop,
+		logs: [],
 	};
 
 	state = {
@@ -145,9 +149,19 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Heading to display with date and number of events
 	 */
 	renderEventsHeading() {
-		const { applySiteOffset, isToday, logs, moment, translate, tsEndOfSiteDay } = this.props;
+		const {
+			applySiteOffset,
+			isToday,
+			logs,
+			moment,
+			translate,
+			tsEndOfSiteDay,
+			emptyRangeDate,
+		} = this.props;
 
-		const formattedDate = applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' );
+		const formattedDate = isEmpty( emptyRangeDate )
+			? applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' )
+			: emptyRangeDate;
 		const noActivityText = isToday ? translate( 'No activity yet!' ) : translate( 'No activity' );
 
 		return (
@@ -191,7 +205,11 @@ class ActivityLogDay extends Component {
 		} = this.props;
 
 		if ( isEmpty( logs ) ) {
-			return null;
+			return (
+				<div className={ classnames( 'activity-log-day', 'is-empty' ) }>
+					<FoldableCard header={ this.renderEventsHeading() } />
+				</div>
+			);
 		}
 
 		const rewindHere = this.state.rewindHere;
