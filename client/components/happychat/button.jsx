@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
@@ -28,10 +27,12 @@ class HappychatButton extends Component {
 		allowMobileRedirect: PropTypes.bool,
 		borderless: PropTypes.bool,
 		connectChat: PropTypes.func,
+		hasUnread: PropTypes.bool,
 		isChatActive: PropTypes.bool,
 		isChatAvailable: PropTypes.bool,
 		onClick: PropTypes.func,
 		openChat: PropTypes.func,
+		primary: PropTypes.bool,
 		translate: PropTypes.func,
 	};
 
@@ -39,6 +40,7 @@ class HappychatButton extends Component {
 		allowMobileRedirect: false,
 		borderless: true,
 		connectChat: noop,
+		hasUnread: false,
 		isChatActive: false,
 		isChatAvailable: false,
 		onClick: noop,
