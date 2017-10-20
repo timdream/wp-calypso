@@ -46,6 +46,7 @@ import {
 	isConfirmationSidebarEnabled,
 	isEditorOnlyRouteInHistory,
 } from 'state/ui/editor/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -302,6 +303,12 @@ export const PostEditor = React.createClass( {
 		if ( isWithinBreakpoint( '<660px' ) ) {
 			this.props.setLayoutFocus( 'content' );
 		}
+
+		this.trackLoadRevision();
+	},
+
+	trackLoadRevision() {
+		this.props.recordTracksEvent( 'calypso_editor_post_revisions_load_revision' );
 	},
 
 	render: function() {
@@ -1411,6 +1418,7 @@ export default connect(
 				setLayoutFocus,
 				setNextLayoutFocus,
 				saveConfirmationSidebarPreference,
+				recordTracksEvent,
 			},
 			dispatch
 		);
