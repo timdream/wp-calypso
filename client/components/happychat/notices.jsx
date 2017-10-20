@@ -1,17 +1,17 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import {
 	HAPPYCHAT_CHAT_STATUS_ASSIGNING,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
@@ -74,6 +74,13 @@ class Notices extends Component {
 		return <div className="happychat__notice">{ noticeText }</div>;
 	}
 }
+
+Notices.propTypes = {
+	chatStatus: PropTypes.string,
+	connectionStatus: PropTypes.string,
+	isServerReachable: PropTypes.bool,
+	translate: PropTypes.func,
+};
 
 const mapState = state => ( {
 	isServerReachable: isHappychatServerReachable( state ),
