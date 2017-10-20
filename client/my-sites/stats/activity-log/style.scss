@@ -21,3 +21,21 @@
 .activity-log__rewind-toggle {
 	margin-bottom: 18px;
 }
+
+.activity-log__empty-day {
+	background: $gray-light;
+	width: 100%;
+	padding: 0 16px 4px;
+	position: relative;
+	z-index: 2;
+	margin-bottom: 16px;
+}
+
+.activity-log__empty-day-title {
+	font-weight: 600;
+}
+
+.activity-log__empty-day-events {
+	font-size: 12px;
+	color: $gray;
+}
