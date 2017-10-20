@@ -1,27 +1,19 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import GridIcon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
-import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
-import {
-	blur,
-	focus,
-	openChat,
-	closeChat,
-	minimizeChat,
-	minimizedChat,
-} from 'state/happychat/ui/actions';
+import { blur, focus, closeChat, minimizeChat, minimizedChat } from 'state/happychat/ui/actions';
 import isHappychatMinimizing from 'state/happychat/selectors/is-happychat-minimizing';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import HappychatConnection from './connection';
@@ -54,7 +46,15 @@ class Happychat extends React.Component {
 	}
 
 	render() {
-		const { isChatOpen, isMinimizing, onCloseChat } = this.props;
+		const { isChatOpen, isMinimizing, onCloseChat, onMinimizeChat, onMinimizedChat } = this.props;
+
+		const onCloseChatTitle = () => {
+			onMinimizeChat();
+			setTimeout( () => {
+				onMinimizedChat();
+				onCloseChat();
+			}, 500 );
+		};
 
 		return (
 			<div className="happychat">
@@ -66,7 +66,7 @@ class Happychat extends React.Component {
 					} ) }
 				>
 					<div className="happychat__title">
-						<Title onCloseChat={ onCloseChat } />
+						<Title onCloseChat={ onCloseChatTitle } />
 					</div>
 					<Timeline />
 					<Notices />
@@ -77,32 +77,30 @@ class Happychat extends React.Component {
 	}
 }
 
+Happychat.propTypes = {
+	isChatOpen: PropTypes.bool,
+	isMinimizing: PropTypes.bool,
+	onCloseChat: PropTypes.func,
+	onMinimizeChat: PropTypes.func,
+	onMinimizedChat: PropTypes.func,
+	setBlurred: PropTypes.func,
+	setFocused: PropTypes.func,
+};
+
 const mapState = state => {
 	return {
-		connectionStatus: getHappychatConnectionStatus( state ),
 		isChatOpen: isHappychatOpen( state ),
 		isMinimizing: isHappychatMinimizing( state ),
 	};
 };
 
-const mapDispatch = dispatch => {
+const mapDispatch = () => {
 	return {
-		onOpenChat() {
-			dispatch( openChat() );
-		},
-		onCloseChat() {
-			dispatch( minimizeChat() );
-			setTimeout( function() {
-				dispatch( minimizedChat() );
-				dispatch( closeChat() );
-			}, 500 );
-		},
-		setBlurred() {
-			dispatch( blur() );
-		},
-		setFocused() {
-			dispatch( focus() );
-		},
+		onCloseChat: closeChat,
+		onMinimizeChat: minimizeChat,
+		onMinimizedChat: minimizedChat,
+		setBlurred: blur,
+		setFocused: focus,
 	};
 };
 
