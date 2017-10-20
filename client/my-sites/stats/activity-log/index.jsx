@@ -68,7 +68,7 @@ const flushEmptyDays = days => [
 
 /**
  * Takes a list of [ day, eventList ] pairs and produces
- * a list of [ type, [ start, end? ], eventList? ] triplets
+ * a list of [ type, [ start, end ], eventList? ] triplets
  *
  * We have three ways to represent any given day with
  * Activity Log events:
@@ -132,7 +132,7 @@ const intoVisualGroups = ( remainingDays, groups = [], emptyDays = [] ) => {
 	if ( ! emptyDays.length ) {
 		return intoVisualGroups(
 			nextRemaining,
-			[ ...groups, [ 'non-empty-day', [ day ], events ] ],
+			[ ...groups, [ 'non-empty-day', [ day, day ], events ] ],
 			[]
 		);
 	}
@@ -143,7 +143,7 @@ const intoVisualGroups = ( remainingDays, groups = [], emptyDays = [] ) => {
 	if ( emptyDays.length ) {
 		return intoVisualGroups(
 			nextRemaining,
-			[ ...groups, flushEmptyDays( emptyDays ), [ 'non-empty-day', [ day ], events ] ],
+			[ ...groups, flushEmptyDays( emptyDays ), [ 'non-empty-day', [ day, day ], events ] ],
 			[]
 		);
 	}
@@ -482,14 +482,13 @@ class ActivityLog extends Component {
 							.slice()
 							.reverse() // show with newest event on top
 							.map( ( [ type, time, events ] ) => {
-								const date = last( time );
+								const [ start, end ] = time;
 								const isToday = today.isSame(
-									date
+									end
 										.clone()
 										.utc()
 										.startOf( 'day' )
 								);
-								const [ start, end ] = time;
 
 								switch ( type ) {
 									case 'empty-day':
