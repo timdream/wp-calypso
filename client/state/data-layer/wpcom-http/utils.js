@@ -201,13 +201,17 @@ const createRequestAction = ( options, action ) => {
 	}
 
 	const initiator = initiate( action );
-	if ( initiator ) {
-		return Object.assign( {}, initiator, {
-			onSuccess: action,
-			onFailure: action,
-			onProgress: action,
-		} );
+	if ( ! initiator ) {
+		warn(
+			"The `initiate` handler didn't return any action to dispatch: you probably wanted to initiate a request?"
+		);
 	}
+
+	return Object.assign( {}, initiator, {
+		onSuccess: action,
+		onFailure: action,
+		onProgress: action,
+	} );
 };
 
 /*
