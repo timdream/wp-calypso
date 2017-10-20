@@ -27,10 +27,16 @@ const getPostRevisionChanges = createSelector(
 		}
 		const previousRevision = orderedRevisions[ revisionIndex + 1 ];
 		const currentRevision = orderedRevisions[ revisionIndex ];
-		return {
+		const diffStartTime = Date.now();
+		const changes = {
 			content: diffKey( 'content', previousRevision, currentRevision ),
 			title: diffKey( 'title', previousRevision, currentRevision ),
 		};
+		const diffEndTime = Date.now();
+
+		changes.diffGenerationTime = diffEndTime - diffStartTime;
+
+		return changes;
 	},
 	state => [ state.posts.revisions.revisions ]
 );
