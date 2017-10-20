@@ -239,6 +239,7 @@ const ThemeShowcase = React.createClass( {
 						</Button>
 					) }
 					<ThemesSelection
+						upsellUrl={ this.props.upsellUrl }
 						search={ search }
 						tier={ this.props.tier }
 						filter={ filter }
