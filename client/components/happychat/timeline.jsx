@@ -1,25 +1,24 @@
-/**
- * 	External dependencies
- *
- * @format
- */
+/** @format */
 
+/**
+ * External dependencies
+ */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { assign, isArray, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
- *	Internal dependencies
+ * Internal dependencies
  */
 import { first, when, forEach } from './functional';
 import autoscroll from './autoscroll';
 import Emojify from 'components/emojify';
 import scrollbleed from './scrollbleed';
-import { translate } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getHappychatTimeline } from 'state/happychat/selectors';
-import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
 import { isExternal, addSchemeIfMissing, setUrlScheme } from 'lib/url';
 
 import debugFactory from 'debug';
@@ -148,7 +147,7 @@ const groupMessages = messages => {
 	return grouped.groups.concat( [ grouped.group ] );
 };
 
-const welcomeMessage = ( { currentUserEmail } ) => (
+const welcomeMessage = ( { currentUserEmail, translate } ) => (
 	<div className="happychat__welcome">
 		<p>
 			{ translate(
@@ -190,6 +189,14 @@ const chatTimeline = when( timelineHasContent, renderTimeline, welcomeMessage );
 export const Timeline = React.createClass( {
 	mixins: [ autoscroll, scrollbleed ],
 
+	propTypes: {
+		currentUserEmail: PropTypes.string,
+		isCurrentUser: PropTypes.func,
+		onScrollContainer: PropTypes.func,
+		timeline: PropTypes.array,
+		translate: PropTypes.func,
+	},
+
 	getDefaultProps() {
 		return {
 			onScrollContainer: () => {},
@@ -215,7 +222,6 @@ export const Timeline = React.createClass( {
 const mapProps = state => {
 	const current_user = getCurrentUser( state );
 	return {
-		connectionStatus: getHappychatConnectionStatus( state ),
 		timeline: getHappychatTimeline( state ),
 		isCurrentUser: ( { user_id, source } ) => {
 			return user_id.toString() === current_user.ID.toString() && source === 'customer';
@@ -224,4 +230,4 @@ const mapProps = state => {
 	};
 };
 
-export default connect( mapProps )( Timeline );
+export default localize( connect( mapProps )( Timeline ) );
