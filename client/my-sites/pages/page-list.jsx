@@ -25,9 +25,9 @@ import { sortPagesHierarchically } from './helpers';
 import BlogPostsPage from './blog-posts-page';
 import { hasInitializedSites } from 'state/selectors';
 import {
-	getSitePostsForQueryIgnoringPage,
-	isRequestingSitePostsForQuery,
-	isSitePostsLastPageForQuery,
+	getPostsForQueryIgnoringPage,
+	isRequestingPostsForQuery,
+	isPostsLastPageForQuery,
 } from 'state/posts/selectors';
 import { getSite } from 'state/sites/selectors';
 
@@ -351,9 +351,9 @@ const Pages = localize(
 
 const mapState = ( state, { query, siteId } ) => ( {
 	hasSites: hasInitializedSites( state ),
-	loading: isRequestingSitePostsForQuery( state, siteId, query ),
-	lastPage: isSitePostsLastPageForQuery( state, siteId, query ),
-	pages: getSitePostsForQueryIgnoringPage( state, siteId, query ) || [],
+	loading: isRequestingPostsForQuery( state, siteId, query ),
+	lastPage: isPostsLastPageForQuery( state, siteId, query ),
+	pages: getPostsForQueryIgnoringPage( state, siteId, query ) || [],
 	site: getSite( state, siteId ),
 } );
 
