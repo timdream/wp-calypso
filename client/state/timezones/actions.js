@@ -6,9 +6,12 @@
 
 import { TIMEZONES_RECEIVE, TIMEZONES_REQUEST } from 'state/action-types';
 import { addCoreHandlers } from 'state/data-layer/middleware';
-import timezones from 'state/data-layer/wpcom/timezones';
+import timezonesHandler from 'state/data-layer/wpcom/timezones';
+import { addReducers } from 'state/reducer-registry';
+import timezones from 'state/timezones/reducer';
 
-addCoreHandlers( timezones );
+addCoreHandlers( timezonesHandler );
+addReducers( { timezones } );
 
 export const requestTimezones = () => ( {
 	type: TIMEZONES_REQUEST,

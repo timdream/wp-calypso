@@ -10,6 +10,10 @@ import { get, map, toPairs } from 'lodash';
  * Internal dependencies
  */
 import { getTimezonesLabel } from 'state/selectors';
+import { addReducers } from 'state/reducer-registry';
+import timezones from 'state/timezones/reducer';
+
+addReducers( { timezones } );
 
 /**
  * Return all timezones ordered by arrays with

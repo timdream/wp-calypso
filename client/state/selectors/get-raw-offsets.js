@@ -7,6 +7,14 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import { addReducers } from 'state/reducer-registry';
+import timezones from 'state/timezones/reducer';
+
+addReducers( { timezones } );
+
+/**
  * Return manual utc offsets data
  * gotten from state.timezones subtree.
  *

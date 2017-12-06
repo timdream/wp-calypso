@@ -71,7 +71,6 @@ import stats from './stats/reducer';
 import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
 import terms from './terms/reducer';
-import timezones from './timezones/reducer';
 import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
@@ -145,7 +144,6 @@ const reducers = {
 	storedCards,
 	support,
 	terms,
-	timezones,
 	themes,
 	ui,
 	users,

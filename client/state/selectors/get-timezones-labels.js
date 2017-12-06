@@ -7,6 +7,14 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import { addReducers } from 'state/reducer-registry';
+import timezones from 'state/timezones/reducer';
+
+addReducers( { timezones } );
+
+/**
  * Return an object of timezones.
  * Each element is has the shape `[ value ]: label`.
  * The `value` is the timezone-value used to data processing,
