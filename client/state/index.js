@@ -11,7 +11,6 @@ import { reducer as form } from 'redux-form';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
 import { combineReducersAndAddLater, reducerRegistryEnhancer } from './reducer-registry';
 import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
@@ -156,7 +155,7 @@ const reducers = {
 	wordads,
 };
 
-export const reducer = combineReducers( reducers );
+export const reducer = combineReducersAndAddLater( reducers );
 
 /**
  * @typedef {Object} ReduxStore
