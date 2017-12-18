@@ -1,0 +1,29 @@
+#!/bin/bash
+
+[ -z "$CALYPSO_CODEMODS" ] && CALYPSO_CODEMODS=cacalypso-codemods
+
+# Step 0, find data-layer handlers and their action types
+
+echo "[" > ./data-layer-action-types.json
+eval "$CALYPSO_CODEMODS" get-data-layer-action-types ./client/state/data-layer \
+	| grep "{\"file" \
+	| sed -e :a -e '$!N; s/\n/,/; ta' \
+	>> ./data-layer-action-types.json
+echo "]" >> ./data-layer-action-types.json
+
+# Step 1, find the action creators and their action types
+
+echo "[" > ./action-creators-action-types.json
+eval "$CALYPSO_CODEMODS" get-action-creators-action-types ./client/state \
+	| grep "{\"file" \
+	| sed -e :a -e '$!N; s/\n/,/; ta' \
+	>> ./action-creators-action-types.json
+echo "]" >> ./action-creators-action-types.json
+
+# Step 2, re-arrange the list by action types
+
+node ./bin/get-action-types.js ./data-layer-action-types.json ./action-creators-action-types.json ./action-types-info.json
+
+# Step 3, modify these action creators
+
+# Step 4, remove the data-layer from core imports
