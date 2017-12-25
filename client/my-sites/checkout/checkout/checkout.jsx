@@ -5,17 +5,7 @@
  */
 
 import { connect } from 'react-redux';
-import {
-	difference,
-	flatten,
-	filter,
-	find,
-	get,
-	isEmpty,
-	isEqual,
-	reduce,
-	startsWith,
-} from 'lodash';
+import { flatten, filter, find, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -53,7 +43,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
 import upgradesActions from 'lib/upgrades/actions';
-import { getContactDetailsCache } from 'state/selectors';
+import { getContactDetailsCache, isEligibleForCheckoutToChecklist } from 'state/selectors';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import { isValidFeatureKey, getUpgradePlanSlugFromPath } from 'lib/plans';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
@@ -271,7 +261,7 @@ const Checkout = createReactClass( {
 		return flatten( Object.values( purchases ) );
 	},
 
-	getCheckoutCompleteRedirectPath: function() {
+	getCheckoutCompleteRedirectPath() {
 		let renewalItem;
 		const { cart, selectedSiteSlug, transaction: { step: { data: receipt } } } = this.props;
 
@@ -299,6 +289,13 @@ const Checkout = createReactClass( {
 
 		if ( ! selectedSiteSlug ) {
 			return '/checkout/thank-you/features';
+		}
+
+		if (
+			this.props.isEligibleForCheckoutToChecklist &&
+			'show' === abtest( 'checklistThankYouForPaidUser' )
+		) {
+			return `/checklist/thank-you/${ selectedSiteSlug }/${ receiptId }`;
 		}
 
 		if ( abtest( 'gsuiteUpsell' ) === 'show' ) {
@@ -466,19 +463,8 @@ const Checkout = createReactClass( {
 	},
 
 	paymentMethodsAbTestFilter: function() {
-		// Apply AB test to payment methods, for Giropay And Bancontact
-		// Only run this if the user is eligible for one of these payment methods
-		if (
-			-1 === this.props.paymentMethods.indexOf( 'bancontact' ) &&
-			-1 === this.props.paymentMethods.indexOf( 'giropay' )
-		) {
-			return this.props.paymentMethods;
-		}
-
-		// If not in the 'show' variation, remove bancontact and giropay from the current methods
-		if ( abtest( 'showNewPaymentMethods', this.props.userCountryCode ) !== 'show' ) {
-			return difference( this.props.paymentMethods, [ 'bancontact', 'giropay' ] );
-		}
+		// This methods can be used to filter payment methods
+		// For example, for the purpose of AB tests.
 
 		return this.props.paymentMethods;
 	},
@@ -523,7 +509,7 @@ const Checkout = createReactClass( {
 } );
 
 export default connect(
-	state => {
+	( state, props ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {
@@ -535,6 +521,11 @@ export default connect(
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			contactDetails: getContactDetailsCache( state ),
 			userCountryCode: getCurrentUserCountryCode( state ),
+			isEligibleForCheckoutToChecklist: isEligibleForCheckoutToChecklist(
+				state,
+				selectedSiteId,
+				props.cart
+			),
 		};
 	},
 	{

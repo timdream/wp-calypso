@@ -18,21 +18,22 @@ const tasks = {
 		duration: '10 mins',
 		completedTitle: 'You updated your About page',
 		completedButtonText: 'Change',
-		url: '/pages/$siteSlug',
 		image: '/calypso/images/stats/tasks/about.svg',
+		tour: 'checklistAboutPage',
 	},
 	avatar_uploaded: {
 		title: 'Upload your profile picture',
 		description:
-			'Who’s the person behind the site? Personalize your posts and comments with a custom avatar.',
+			'Who’s the person behind the site? Personalize your posts and comments with a custom profile picture.',
 		duration: '2 mins',
-		completedTitle: 'You uploaded an avatar',
+		completedTitle: 'You uploaded a profile picture',
 		completedButtonText: 'Change',
 		url: '/me',
 		image: '/calypso/images/stats/tasks/upload-profile-picture.svg',
+		tour: 'checklistUserAvatar',
 	},
 	blogname_set: {
-		title: 'Personalize your site',
+		title: 'Give your site a name',
 		description: 'Give your site a descriptive name to entice visitors.',
 		duration: '1 min',
 		completedTitle: 'You updated your site title',
@@ -49,6 +50,7 @@ const tasks = {
 		completedButtonText: 'Change',
 		url: '/settings/general/$siteSlug',
 		image: '/calypso/images/stats/tasks/create-tagline.svg',
+		tour: 'checklistSiteTagline',
 	},
 	contact_page_updated: {
 		title: 'Personalize your Contact page',
@@ -56,8 +58,8 @@ const tasks = {
 		duration: '2 mins',
 		completedTitle: 'You updated your Contact page',
 		completedButtonText: 'Edit',
-		url: '/pages/$siteSlug',
 		image: '/calypso/images/stats/tasks/contact.svg',
+		tour: 'checklistContactPage',
 	},
 	custom_domain_registered: {
 		title: 'Register a custom domain',
@@ -82,8 +84,9 @@ const tasks = {
 		duration: '10 mins',
 		completedTitle: 'You published your first blog post',
 		completedButtonText: 'Edit',
-		url: '/posts/$siteSlug',
+		url: '/post/$siteSlug/4',
 		image: '/calypso/images/stats/tasks/first-post.svg',
+		tour: 'checklistPublishPost',
 	},
 	site_created: {
 		title: 'Create your site',
@@ -99,6 +102,7 @@ const tasks = {
 		completedButtonText: 'Change',
 		url: '/settings/general/$siteSlug',
 		image: '/calypso/images/stats/tasks/upload-icon.svg',
+		tour: 'checklistSiteIcon',
 	},
 	social_links_set: {
 		title: 'Display links to your social accounts',
@@ -106,7 +110,7 @@ const tasks = {
 		duration: '2 mins',
 		completedTitle: 'You added your social accounts.',
 		completedButtonText: 'Change',
-		url: '/customize/$siteSlug',
+		url: '/customize/$siteSlug?guide=social-media',
 		image: '/calypso/images/stats/tasks/social-links.svg',
 	},
 };

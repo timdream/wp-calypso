@@ -85,28 +85,36 @@ export default {
 	gsuiteUpsell: {
 		datestamp: '20171025',
 		variations: {
-			show: 50,
-			hide: 50,
+			show: 0,
+			hide: 100,
 		},
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
-	},
-	showNewPaymentMethods: {
-		datestamp: '20171115',
-		variations: {
-			hide: 50,
-			show: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-		localeTargets: 'any',
 	},
 	signupSiteSegmentStep: {
 		datestamp: '20170329',
 		variations: {
-			control: 50,
-			variant: 50,
+			control: 0,
+			variant: 100,
 		},
 		defaultVariation: 'control',
+	},
+	checklistThankYouForFreeUser: {
+		datestamp: '20171204',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
+	checklistThankYouForPaidUser: {
+		datestamp: '20171204',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
 	},
 };

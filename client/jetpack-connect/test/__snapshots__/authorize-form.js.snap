@@ -7,7 +7,27 @@ exports[`AuthorizeForm should render LoggedInForm when logged in 1`] = `
   <div
     className="jetpack-connect__authorize-form"
   >
-    <Connect(Localized(LoggedInForm)) />
+    <Connect(Localized(LoggedInForm))
+      authQuery={
+        Object {
+          "authApproved": false,
+          "blogname": "Example Blog",
+          "clientId": 98765,
+          "from": "banner-44-slide-1-dashboard",
+          "homeUrl": "http://an.example.site",
+          "jpVersion": "5.4",
+          "nonce": "fooBarNonce",
+          "redirectAfterAuth": "http://an.example.site/wp-admin/admin.php?page=jetpack",
+          "redirectUri": "http://an.example.site/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2Fan.example.site%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack",
+          "scope": "administrator:fooBarBaz",
+          "secret": "fooBarSecret",
+          "site": "http://an.example.site",
+          "siteIcon": "",
+          "siteUrl": "http://an.example.site",
+          "userEmail": "email@an.example.site",
+        }
+      }
+    />
   </div>
 </JetpackConnectMainWrapper>
 `;
@@ -20,6 +40,25 @@ exports[`AuthorizeForm should render LoggedOutForm when logged out 1`] = `
     className="jetpack-connect__authorize-form"
   >
     <Connect(Localized(LoggedOutForm))
+      authQuery={
+        Object {
+          "authApproved": false,
+          "blogname": "Example Blog",
+          "clientId": 98765,
+          "from": "banner-44-slide-1-dashboard",
+          "homeUrl": "http://an.example.site",
+          "jpVersion": "5.4",
+          "nonce": "fooBarNonce",
+          "redirectAfterAuth": "http://an.example.site/wp-admin/admin.php?page=jetpack",
+          "redirectUri": "http://an.example.site/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2Fan.example.site%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack",
+          "scope": "administrator:fooBarBaz",
+          "secret": "fooBarSecret",
+          "site": "http://an.example.site",
+          "siteIcon": "",
+          "siteUrl": "http://an.example.site",
+          "userEmail": "email@an.example.site",
+        }
+      }
       path="/jetpack/connect/authorize"
     />
   </div>

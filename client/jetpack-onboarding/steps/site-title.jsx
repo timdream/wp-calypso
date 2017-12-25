@@ -5,6 +5,7 @@
  */
 import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
+import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	state = {
@@ -30,6 +32,13 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 
 	setTitle = event => {
 		this.setState( { title: event.target.value } );
+	};
+
+	submit = () => {
+		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
+			siteTitle: this.state.title,
+			siteDescription: this.state.description,
+		} );
 	};
 
 	render() {
@@ -49,10 +58,10 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 						<FormFieldset>
 							<FormLabel htmlFor="title">{ translate( 'Site Title' ) }</FormLabel>
 							<FormTextInput
+								autoFocus
 								id="title"
 								onChange={ this.setTitle }
 								value={ this.state.title }
-								autoFocus
 							/>
 						</FormFieldset>
 
@@ -65,7 +74,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 							/>
 						</FormFieldset>
 
-						<Button href={ this.props.getForwardUrl() } primary>
+						<Button href={ this.props.getForwardUrl() } onClick={ this.submit } primary>
 							{ translate( 'Next Step' ) }
 						</Button>
 					</form>
@@ -75,4 +84,6 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	}
 }
 
-export default localize( JetpackOnboardingSiteTitleStep );
+export default connect( null, { saveJetpackOnboardingSettings } )(
+	localize( JetpackOnboardingSiteTitleStep )
+);

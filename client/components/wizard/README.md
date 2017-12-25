@@ -42,7 +42,17 @@ Link text for navigating to the previous step in the wizard.
 </table>
 
 Used when navigating between steps. The URL that the user is sent to will be constructed using
-`basePath` and `stepName` (see below).
+`basePath`, `stepName`, and `baseSuffix` (see below).
+
+### `baseSuffix`
+
+<table>
+	<tr><td>Type</td><td>String</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+</table>
+
+Used when navigating between steps. The URL that the user is sent to will be constructed using
+`basePath`, `stepName`, and `baseSuffix` (see below).
 
 ### `components`
 
@@ -89,3 +99,7 @@ An array of strings denoting each of the steps in the wizard.
 </table>
 
 The name of the current step (one of the values in `steps`).
+
+### Additional props
+
+Any additional props will be passed to each individual step component.

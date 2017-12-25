@@ -17,7 +17,6 @@ import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
 import Tooltip from 'components/tooltip';
-import { isEnabled } from 'config';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 import { getSiteComment } from 'state/selectors';
@@ -39,17 +38,6 @@ export class CommentAuthor extends Component {
 
 	storeLinkIndicatorRef = icon => ( this.hasLinkIndicator = icon );
 
-	commentHasLink = () => {
-		if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
-			const parser = new DOMParser();
-			const commentDom = parser.parseFromString( this.props.commentContent, 'text/html' );
-
-			return !! commentDom.getElementsByTagName( 'a' ).length;
-		}
-
-		return false;
-	};
-
 	hideLinkTooltip = () => this.setState( { isLinkTooltipVisible: false } );
 
 	showLinkTooltip = () => this.setState( { isLinkTooltipVisible: true } );
@@ -64,6 +52,7 @@ export class CommentAuthor extends Component {
 			commentType,
 			commentUrl,
 			gravatarUser,
+			hasLink,
 			isBulkMode,
 			isPostView,
 			moment,
@@ -91,7 +80,7 @@ export class CommentAuthor extends Component {
 
 				<div className="comment__author-info">
 					<div className="comment__author-info-element">
-						{ this.commentHasLink() && (
+						{ hasLink && (
 							<span
 								onMouseEnter={ this.showLinkTooltip }
 								onMouseLeave={ this.hideLinkTooltip }
@@ -115,19 +104,9 @@ export class CommentAuthor extends Component {
 
 					<div className="comment__author-info-element">
 						<span className="comment__date">
-							{ isEnabled( 'comments/management/comment-view' ) ? (
-								<a href={ commentUrl } tabIndex={ isBulkMode ? -1 : 0 } title={ formattedDate }>
-									{ relativeDate }
-								</a>
-							) : (
-								<ExternalLink
-									href={ commentUrl }
-									tabIndex={ isBulkMode ? -1 : 0 }
-									title={ formattedDate }
-								>
-									{ relativeDate }
-								</ExternalLink>
-							) }
+							<a href={ commentUrl } tabIndex={ isBulkMode ? -1 : 0 } title={ formattedDate }>
+								{ relativeDate }
+							</a>
 						</span>
 						{ authorUrl && (
 							<span className="comment__author-url">
@@ -159,10 +138,9 @@ const mapStateToProps = ( state, { commentId } ) => {
 		commentContent: get( comment, 'content' ),
 		commentDate: get( comment, 'date' ),
 		commentType: get( comment, 'type', 'comment' ),
-		commentUrl: isEnabled( 'comments/management/comment-view' )
-			? `/comment/${ siteSlug }/${ commentId }`
-			: get( comment, 'URL' ),
+		commentUrl: `/comment/${ siteSlug }/${ commentId }`,
 		gravatarUser,
+		hasLink: get( comment, 'has_link', false ),
 	};
 };
 

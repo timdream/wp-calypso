@@ -1,4 +1,16 @@
 /** @format */
+
+/**
+ * Handle log in and sign up as part of the Jetpack Connect flow
+ *
+ * For user creation, this component relies on redux to store state as a user is created via a
+ * series of actions. Eventually this results in updating the `authorizationData.userData` prop on
+ * this component.
+ *
+ * When this component receives `userData`, it renders a `<WpcomLoginForm />` with the userData,
+ * which handles logging in the new user and redirection.
+ */
+
 /**
  * External dependencies
  */
@@ -30,16 +42,16 @@ const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 
 class LoggedOutForm extends Component {
 	static propTypes = {
-		authorizationData: PropTypes.shape( {
-			bearerToken: PropTypes.string,
-			isAuthorizing: PropTypes.bool,
-			queryObject: PropTypes.object.isRequired,
-			userData: PropTypes.object,
-		} ).isRequired,
+		authQuery: PropTypes.object.isRequired,
 		locale: PropTypes.string,
 		path: PropTypes.string,
 
 		// Connected props
+		authorizationData: PropTypes.shape( {
+			bearerToken: PropTypes.string,
+			isAuthorizing: PropTypes.bool,
+			userData: PropTypes.object,
+		} ).isRequired,
 		createAccount: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -47,11 +59,6 @@ class LoggedOutForm extends Component {
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
-	}
-
-	getRedirectAfterLoginUrl() {
-		const { queryObject } = this.props.authorizationData;
-		return addQueryArgs( queryObject, window.location.href );
 	}
 
 	handleSubmitSignup = ( form, userData ) => {
@@ -63,15 +70,23 @@ class LoggedOutForm extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
 
+	/**
+	 * Log in the new user
+	 *
+	 * After an account is created, `authorizationData.userData` is populated
+	 * and we render this component to log the new user in.
+	 *
+	 * @return {Object} React element for render.
+	 */
 	renderLoginUser() {
-		const { userData, bearerToken, queryObject } = this.props.authorizationData;
+		const { userData, bearerToken } = this.props.authorizationData;
 
 		return (
 			<WpcomLoginForm
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
-				emailAddress={ queryObject.user_email }
-				redirectTo={ this.getRedirectAfterLoginUrl() }
+				emailAddress={ this.props.authQuery.userEmail }
+				redirectTo={ addQueryArgs( { auth_approved: true }, window.location.href ) }
 			/>
 		);
 	}
@@ -83,15 +98,14 @@ class LoggedOutForm extends Component {
 	}
 
 	renderFooterLink() {
-		const redirectTo = this.getRedirectAfterLoginUrl();
-		const emailAddress = this.props.authorizationData.queryObject.user_email;
+		const emailAddress = this.props.authQuery.userEmail;
 
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem
 					href={ login( {
 						isNative: config.isEnabled( 'login/native-login-links' ),
-						redirectTo,
+						redirectTo: window.location.href,
 						emailAddress,
 					} ) }
 				>
@@ -103,20 +117,20 @@ class LoggedOutForm extends Component {
 	}
 
 	render() {
-		const { isAuthorizing, userData, queryObject } = this.props.authorizationData;
+		const { isAuthorizing, userData } = this.props.authorizationData;
 
 		return (
 			<div>
 				{ this.renderLocaleSuggestions() }
-				<AuthFormHeader />
+				<AuthFormHeader authQuery={ this.props.authQuery } />
 				<SignupForm
-					redirectToAfterLoginUrl={ this.getRedirectAfterLoginUrl() }
+					redirectToAfterLoginUrl="!! THIS PROP IS REQUIRED BUT UNUSED !!"
 					disabled={ isAuthorizing }
 					submitting={ isAuthorizing }
 					submitForm={ this.handleSubmitSignup }
 					submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
 					footerLink={ this.renderFooterLink() }
-					email={ queryObject.user_email }
+					email={ this.props.authQuery.userEmail }
 					suggestedUsername={ get( userData, 'username', '' ) }
 				/>
 				{ userData && this.renderLoginUser() }

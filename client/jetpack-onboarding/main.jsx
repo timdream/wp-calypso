@@ -16,6 +16,7 @@ import {
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
 } from './constants';
+import { getUnconnectedSiteIdBySlug } from 'state/selectors';
 
 class JetpackOnboardingMain extends React.PureComponent {
 	static propTypes = {
@@ -26,14 +27,18 @@ class JetpackOnboardingMain extends React.PureComponent {
 		stepName: STEPS.SITE_TITLE,
 	};
 
+	// TODO: Add lifecycle methods to redirect if no siteId
+
 	render() {
-		const { stepName, steps } = this.props;
+		const { siteId, siteSlug, stepName, steps } = this.props;
 
 		return (
 			<Main className="jetpack-onboarding">
 				<Wizard
 					basePath="/jetpack/onboarding"
+					baseSuffix={ siteSlug }
 					components={ COMPONENTS }
+					siteId={ siteId /* Passed down to individual steps */ }
 					steps={ steps }
 					stepName={ stepName }
 					hideNavigation={ stepName === STEPS.SUMMARY }
@@ -43,7 +48,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 	}
 }
 
-export default connect( () => {
+export default connect( ( state, { siteSlug } ) => {
 	// Note: here we can select which steps to display, based on user's input
 	const steps = compact( [
 		STEPS.SITE_TITLE,
@@ -56,6 +61,8 @@ export default connect( () => {
 	] );
 
 	return {
+		siteId: getUnconnectedSiteIdBySlug( state, siteSlug ),
+		siteSlug,
 		steps,
 	};
 } )( JetpackOnboardingMain );

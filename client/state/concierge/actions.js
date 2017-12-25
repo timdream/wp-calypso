@@ -3,14 +3,45 @@
 /**
  * Internal dependencies
  */
-import { CONCIERGE_SHIFTS_REQUEST, CONCIERGE_SHIFTS_UPDATE } from 'state/action-types';
+import {
+	CONCIERGE_AVAILABLE_TIMES_REQUEST,
+	CONCIERGE_AVAILABLE_TIMES_UPDATE,
+	CONCIERGE_APPOINTMENT_CREATE,
+	CONCIERGE_SIGNUP_FORM_UPDATE,
+	CONCIERGE_UPDATE_BOOKING_STATUS,
+} from 'state/action-types';
 
-export const requestConciergeShifts = scheduleId => ( {
-	type: CONCIERGE_SHIFTS_REQUEST,
+export const requestConciergeAvailableTimes = scheduleId => ( {
+	type: CONCIERGE_AVAILABLE_TIMES_REQUEST,
 	scheduleId,
 } );
 
-export const updateConciergeShifts = shifts => ( {
-	type: CONCIERGE_SHIFTS_UPDATE,
-	shifts,
+export const updateConciergeAvailableTimes = availableTimes => ( {
+	type: CONCIERGE_AVAILABLE_TIMES_UPDATE,
+	availableTimes,
+} );
+
+export const updateConciergeSignupForm = signupForm => ( {
+	type: CONCIERGE_SIGNUP_FORM_UPDATE,
+	signupForm,
+} );
+
+export const updateConciergeBookingStatus = status => ( {
+	type: CONCIERGE_UPDATE_BOOKING_STATUS,
+	status,
+} );
+
+export const bookConciergeAppointment = (
+	scheduleId,
+	beginTimestamp,
+	customerId,
+	siteId,
+	meta
+) => ( {
+	type: CONCIERGE_APPOINTMENT_CREATE,
+	scheduleId,
+	beginTimestamp,
+	customerId,
+	siteId,
+	meta,
 } );
