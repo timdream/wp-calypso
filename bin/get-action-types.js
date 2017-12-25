@@ -9,35 +9,53 @@ const path = require( 'path' );
 function main() {
 	let debug = false;
 	const args = process.argv.slice( 2 );
-	const dataLayerInputPath = args[0];
-	const actionCreatorInputPath = args[1];
-	const outputPath = args[2];
+	const inputPath = args[0];
+	const outputPath = args[1];
 
 	const actionTypes = {};
 
-	const dataLayerFiles = JSON.parse( fs.readFileSync( dataLayerInputPath ) );
-	dataLayerFiles.forEach(( { file, types } ) => {
+	const files = JSON.parse( fs.readFileSync( inputPath ) );
+	files.forEach(( { file, classifications, types } ) => {
 		types.forEach( type => {
-			actionTypes[type] = actionTypes[type] = { handler: '', actionCreators: [] };
-			if (actionTypes[type].handler) {
-				throw new Error("Same action type " + type +
-					" being handled by more than one handlers. " +
-					" Likely an error on AST parsing. Check the code.");
-			}
-			actionTypes[type].handler = file;
-		});
-	});
+			actionTypes[ type ] = actionTypes[ type ] || {
+				dataLayerHandlers: [],
+				actions: [],
+				reducers: [],
+				unknowns: [],
+				isAmbiguous: false
+			};
 
-	const actionTypeKeys = Object.keys( actionTypes );
-
-	const actionCreatorFiles = JSON.parse( fs.readFileSync( actionCreatorInputPath ) );
-	actionCreatorFiles.forEach(( { file, types } ) => {
-		types.forEach( type => {
-			if (-1 == actionTypeKeys.indexOf(type)) {
+			if (-1 !== classifications.indexOf( 'test' ) ||
+				-1 !== classifications.indexOf( 'maybe-test' )) {
+				// Skipping adding this file to the final output.
 				return;
 			}
 
-			actionTypes[type].actionCreators.push(file);
+			classifications.forEach( classification => {
+				switch ( classification ) {
+					case 'maybe-action':
+					case 'action':
+						actionTypes[ type ].actions.push( file );
+						break;
+					case 'maybe-reducer':
+					case 'reducer':
+						actionTypes[ type ].reducers.push( file );
+						break;
+					case 'maybe-data-layer-handler':
+					case 'data-layer-handler':
+						actionTypes[ type ].dataLayerHandlers.push( file );
+						break;
+					case 'unknown':
+						actionTypes[ type ].unknowns.push( file );
+						break;
+				}
+			});
+
+			if (-1 !== classifications.indexOf( 'maybe-action' ) ||
+				-1 !== classifications.indexOf( 'maybe-reducer' ) ||
+				-1 !== classifications.indexOf( 'maybe-data-layer-handler' )) {
+				actionTypes[ type ].isAmbiguous = true;
+			}
 		});
 	});
 
