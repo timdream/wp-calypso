@@ -4,16 +4,16 @@
 
 # Step 1, Find and classify all action types references
 
-echo "[" > ./action-types-by-file.json
+echo "[" > ./action-types.json
 eval "$CALYPSO_CODEMODS" get-action-types ./client \
 	| grep "{\"file" \
 	| sed -e :a -e '$!N; s/\n/,/; ta' \
-	>> ./action-types-by-file.json
-echo "]" >> ./action-types-by-file.json
+	>> ./action-types.json
+echo "]" >> ./action-types.json
 
 # Step 2, re-arrange the list by action types
 
-node ./bin/get-action-types.js ./action-types-by-file.json ./action-types-info.json
+node ./bin/get-action-types.js ./action-types.json
 
 # Step 3, modify these action creators
 

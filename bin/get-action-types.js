@@ -9,13 +9,15 @@ const path = require( 'path' );
 function main() {
 	let debug = false;
 	const args = process.argv.slice( 2 );
-	const inputPath = args[0];
-	const outputPath = args[1];
+	const jsonFilePath = args[0];
 
 	const actionTypes = {};
+	const files = {};
 
-	const files = JSON.parse( fs.readFileSync( inputPath ) );
-	files.forEach(( { file, classifications, types } ) => {
+	const list = JSON.parse( fs.readFileSync( jsonFilePath ) );
+	list.forEach(( { file, classifications, types } ) => {
+		files[ file ] = { types, classifications };
+
 		types.forEach( type => {
 			actionTypes[ type ] = actionTypes[ type ] || {
 				dataLayerHandlers: [],
@@ -59,7 +61,41 @@ function main() {
 		});
 	});
 
-	fs.writeFileSync( outputPath, JSON.stringify( actionTypes, null, 2 ) );
+	// Locate the actions that need a specific data layer handler files.
+
+	Object.keys( files ).forEach( file => {
+		const dependents = [];
+
+		let isDataHandler = false;
+		const canBeMoved = files[ file ].types.every( type => {
+			const o = actionTypes[ type ];
+			if ( o.isAmbiguous ||
+				 o.unknowns.length ||
+				 1 < o.dataLayerHandlers.length ||
+				 ( 1 === o.dataLayerHandlers.length &&
+					o.dataLayerHandlers[0] !== file ) ) {
+				return false;
+			}
+
+			if ( o.dataLayerHandlers[0] === file ) {
+				isDataHandler = true;
+			}
+
+			o.actions.forEach( f => {
+				if ( dependents.indexOf(f) === -1 ) {
+					dependents.push( f );
+				}
+			});
+
+			return true;
+		});
+
+		if ( isDataHandler && canBeMoved ) {
+			files[ file ].actionDependents = dependents;
+		}
+	});
+
+	fs.writeFileSync( jsonFilePath, JSON.stringify( { actionTypes, files }, null, 2 ) );
 }
 
 main();
